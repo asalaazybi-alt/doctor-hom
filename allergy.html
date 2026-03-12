@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تحليل الجلد بـ Gemini AI</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f4f7f6; display:flex; justify-content:center; align-items:center; min-height:100vh; }
+    .container { background:#fff; padding:25px; border-radius:15px; box-shadow:0 10px 25px rgba(0,0,0,0.1); width:90%; max-width:450px; text-align:center; }
+    h2 { color:#007acc; margin-bottom:20px; }
+    #video { width:100%; border-radius:12px; border:4px solid #007acc; background:#000; margin-bottom:15px; }
+    button { width:100%; background:#007acc; color:#fff; border:none; padding:15px; border-radius:10px; font-size:16px; font-weight:bold; cursor:pointer; transition:0.3s; }
+    button:hover { background:#005f99; }
+    button:disabled { background:#ccc; }
+    #result { margin-top:20px; padding:15px; background:#e3f2fd; border-radius:10px; text-align:right; min-height:50px; line-height:1.6; font-size:14px; color:#333; border-right:5px solid #007acc; }
+    canvas { display:none; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>تحليل الذكاء الاصطناعي</h2>
+  <video id="video" autoplay playsinline muted></video>
+  <button id="analyzeBtn">التقاط وتحليل الحالة</button>
+  <canvas id="canvas"></canvas>
+  <div id="result">النتيجة ستظهر هنا...</div>
+</div>
+
+<script>
+  const video = document.getElementById("video");
+  const canvas = document.getElementById("canvas");
+  const analyzeBtn = document.getElementById("analyzeBtn");
+  const resultDiv = document.getElementById("result");
+
+  // تشغيل الكاميرا
+  async function initCamera() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: "environment" } 
+      });
+      video.srcObject = stream;
+    } catch (err) {
+      resultDiv.innerHTML = "❌ خطأ: فشل الوصول للكاميرا. تأكد من تفعيل الصلاحيات.";
+    }
+  }
+
+  initCamera();
+
+  analyzeBtn.addEventListener("click", async () => {
+    const ctx = canvas.getContext("2d");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0);
+
+    const imageData = canvas.toDataURL("image/jpeg", 0.7);
+
+    analyzeBtn.disabled = true;
+    analyzeBtn.textContent = "جاري التحليل...";
+    resultDiv.textContent = "يتم الآن معالجة الصورة...";
+
+    try {
+      // استخدام مسار نسبي ليعمل على أي بورت أو رابط
+      const res = await fetch("/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: imageData })
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        resultDiv.textContent = data.result;
+      } else {
+        resultDiv.textContent = "⚠️ خطأ: " + data.error;
+      }
+    } catch (err) {
+      resultDiv.textContent = "❌ فشل الاتصال بالسيرفر.";
+    } finally {
+      analyzeBtn.disabled = false;
+      analyzeBtn.textContent = "التقاط وتحليل الحالة";
+    }
+  });
+</script>
+
+</body>
+</html>
