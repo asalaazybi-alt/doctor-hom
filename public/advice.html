@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>نصائح وإرشادات</title>
+
+<style>
+body { background:#dff5f9; font-family:Arial; text-align:center; }
+
+.navbar { background:#00a6b6; display:flex; justify-content:space-around; padding:10px; color:white; }
+
+.container {
+  background:white; width:400px; margin:auto; margin-top:40px;
+  padding:25px; border-radius:15px;
+}
+
+.box {
+  background:#f0ffff; padding:15px; margin:10px; border-radius:10px;
+}
+</style>
+</head>
+<body>
+<div class="navbar">
+  <button class="nav-btn" onclick="go('index.html')">الرئيسية</button>
+  <button class="nav-btn" onclick="go('check.html')">فحص الحالة</button>
+  <button class="nav-btn" onclick="go('advice.html')">النصائح الطبية</button>
+  <button class="nav-btn" onclick="openHospitals()">المستشفيات القريبة</button>
+  <button class="nav-btn" onclick="go('login.html')">تسجيل الدخول</button>
+</div>
+<div class="container">
+  <h2>نصائح مهمة</h2>
+  <p>🟢شرب سوائل بكثرة</p>
+  <p>🟢 راقبي درجة الحرارة</p>
+  <p>🟢 استشيري الطبيب عند استمرار الأعراض</p>
+
+</div>
+<script>
+function go(p){ location.href=p; }
+
+function openHospitals(){
+  window.open("https://www.google.com/maps/search/مستشفى+قريب+مني+السعودية");
+}
+</script>
+
+</body>
+</html>
